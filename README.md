@@ -32,12 +32,14 @@ Known Issues
 -------
 ##### TinyMCE Editor removes <text> Tags and Linebreaks
 ###### Workaround:
-Adapt "/Administration/Views/Shared/EditorTemplates/RichEditor.cshtml"
+Disable TinyMCE Editor for Message Templates by adapting "/Administration/Views/Shared/EditorTemplates/RichEditor.cshtml"
 ```
+if (document.location.pathname.match(/Admin\/MessageTemplate\/Edit/)) return;
+
 tinyMCE.init({
     ...
-	extended_valid_elements: "text",
-	forced_root_blocks: false
+    extended_valid_elements: "text",
+    forced_root_blocks: false
 });
 ```
 
