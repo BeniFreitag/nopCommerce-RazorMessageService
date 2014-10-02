@@ -1,4 +1,6 @@
-nopCommerce-RazorMessageService
+nopCommerce Razor MessageService
 ===============================
 
-Extend nopCommerce Message Template Engine with Razor-Support (by RazorEngine)
+Extend the core nopCommerce Message Template Engine with Razor-Support (by RazorEngine)
+Works with nopCommerce 3.40
+
