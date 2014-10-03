@@ -63,7 +63,7 @@ Supported Message Templates (from IWorkflowMessageService)
 * NewVATSubmitted.StoreOwnerNotification
 * OrderCancelled.CustomerNotification
 * OrderCompleted.CustomerNotification
-* ####OrderPaid.CustomerNotification (Additional Message Template)
+* **OrderPaid.CustomerNotification** (Additional Message Template)
 * OrderPaid.StoreOwnerNotification
 * OrderPlaced.CustomerNotification
 * OrderPlaced.StoreOwnerNotification
