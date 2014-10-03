@@ -63,6 +63,7 @@ Supported Message Templates (from IWorkflowMessageService)
 * NewVATSubmitted.StoreOwnerNotification
 * OrderCancelled.CustomerNotification
 * OrderCompleted.CustomerNotification
+* ####OrderPaid.CustomerNotification (Additional Message Template)
 * OrderPaid.StoreOwnerNotification
 * OrderPlaced.CustomerNotification
 * OrderPlaced.StoreOwnerNotification
@@ -80,7 +81,11 @@ Supported Message Templates (from IWorkflowMessageService)
 
 Version
 ----
+###1.10
+* Added new Message Template "OrderPaid.CustomerNotification"
+* Works with nopCommerce 3.40 
+
 ###1.00
-#### Works with nopCommerce 3.40
+* Works with nopCommerce 3.40
 
 [RazorEngine]:https://github.com/Antaris/RazorEngine

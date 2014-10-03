@@ -1,7 +1,7 @@
 ﻿Group: Misc
 FriendlyName: Razor MessageService
 SystemName: ToSIC.RazorMessageService
-Version: 1.00
+Version: 1.10
 SupportedVersions: 3.40
 Author: 2sic Internet Solutions
 DisplayOrder: 1
