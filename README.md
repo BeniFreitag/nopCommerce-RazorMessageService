@@ -44,7 +44,7 @@ tinyMCE.init({
 ```
 
 
-Supported Message Templates
+Supported Message Templates (from IWorkflowMessageService)
 ----
 * Blog.BlogComment
 * Customer.BackInStock
