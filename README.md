@@ -7,7 +7,7 @@ Extend any nopCommerce Message Template with the full power of Razor. It works a
 
 Example of "OrderPlaced.CustomerNotification"
 
-```
+```razor
 Hello %Order.CustomerFullName%, 
 Thanks for buying from %Store.Name%. Below is the summary of the order. 
 ...
@@ -47,7 +47,7 @@ tinyMCE.init({
 Supported Message Templates (from IWorkflowMessageService)
 ----
 
-Template | Available Objects in @Model.) | Notes
+Template | Available Objects/Properties in @Model. | Notes
 --- | --- | ---
 Blog.BlogComment | Store, BlogComment
 Customer.BackInStock | Store, Customer, BackInStockSubscription
