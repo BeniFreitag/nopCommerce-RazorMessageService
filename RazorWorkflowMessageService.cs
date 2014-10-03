@@ -444,6 +444,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var store = _storeService.GetStoreById(order.StoreId) ?? _storeContext.CurrentStore;
 			languageId = EnsureLanguageIsActive(languageId, store.Id);
 
+			SendOrderPaidCustomerNotification(order, languageId);	// Send additional Notification to customer
+
 			var messageTemplate = GetActiveMessageTemplate("OrderPaid.StoreOwnerNotification", store.Id);
 			if (messageTemplate == null)
 				return 0;
@@ -466,6 +468,46 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 				languageId, tokens, new { Store = store, Order = order, order.Customer },
 				toEmail, toName);
 		}
+
+
+
+		/// <summary>
+		/// Sends an order paid notification to a customer
+		/// </summary>
+		/// <param name="order">Order instance</param>
+		/// <param name="languageId">Message language identifier</param>
+		/// <returns>Queued email identifier</returns>
+		private int SendOrderPaidCustomerNotification(Order order, int languageId)
+		{
+			if (order == null)
+				throw new ArgumentNullException("order");
+
+			var store = _storeService.GetStoreById(order.StoreId) ?? _storeContext.CurrentStore;
+			languageId = EnsureLanguageIsActive(languageId, store.Id);
+
+			var messageTemplate = GetActiveMessageTemplate("OrderPaid.CustomerNotification", store.Id);
+			if (messageTemplate == null)
+				return 0;
+
+			//email account
+			var emailAccount = GetEmailAccountOfMessageTemplate(messageTemplate, languageId);
+
+			//tokens
+			var tokens = new List<Token>();
+			_messageTokenProvider.AddStoreTokens(tokens, store, emailAccount);
+			_messageTokenProvider.AddOrderTokens(tokens, order, languageId);
+			_messageTokenProvider.AddCustomerTokens(tokens, order.Customer);
+
+			//event notification
+			_eventPublisher.MessageTokensAdded(messageTemplate, tokens);
+
+			var toEmail = order.BillingAddress.Email;
+			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
+			return SendNotification(messageTemplate, emailAccount,
+				languageId, tokens, new { Store = store, Order = order, order.Customer },
+				toEmail, toName);
+		}
+
 
 		/// <summary>
 		/// Sends an order placed notification to a customer
