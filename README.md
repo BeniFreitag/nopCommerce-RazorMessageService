@@ -33,7 +33,7 @@ Known Issues
 ##### TinyMCE Editor removes <text> Tags and Linebreaks
 ###### Workaround:
 Disable TinyMCE Editor for Message Templates by adapting "/Administration/Views/Shared/EditorTemplates/RichEditor.cshtml"
-```
+```javascript
 if (document.location.pathname.match(/Admin\/MessageTemplate\/Edit/)) return;
 
 tinyMCE.init({
@@ -46,37 +46,42 @@ tinyMCE.init({
 
 Supported Message Templates (from IWorkflowMessageService)
 ----
-* Blog.BlogComment
-* Customer.BackInStock
-* Customer.EmailValidationMessage
-* Customer.NewOrderNote
-* Customer.NewPM
-* Customer.PasswordRecovery
-* Customer.WelcomeMessage
-* Forums.NewForumPost
-* Forums.NewForumTopic
-* GiftCard.Notification
-* NewCustomer.Notification
-* NewReturnRequest.StoreOwnerNotification
-* News.NewsComment
-* NewsLetterSubscription.ActivationMessage
-* NewVATSubmitted.StoreOwnerNotification
-* OrderCancelled.CustomerNotification
-* OrderCompleted.CustomerNotification
-* **OrderPaid.CustomerNotification** (Additional Message Template)
-* OrderPaid.StoreOwnerNotification
-* OrderPlaced.CustomerNotification
-* OrderPlaced.StoreOwnerNotification
-* OrderPlaced.VendorNotification
-* Product.ProductReview
-* QuantityBelow.StoreOwnerNotification
-* RecurringPaymentCancelled.StoreOwnerNotification
-* ReturnRequestStatusChanged.CustomerNotification
-* Service.EmailAFriend
-* ShipmentDelivered.CustomerNotification
-* ShipmentSent.CustomerNotification
-* Wishlist.EmailAFriend
 
+Template | Available Objects in @Model.) | Notes
+--- | --- | ---
+Blog.BlogComment | Store, BlogComment
+Customer.BackInStock | Store, Customer, BackInStockSubscription
+Customer.EmailValidationMessage | Store, Customer
+Customer.NewOrderNote | Store, OrderNote, Order, Customer
+Customer.NewPM | Store, PrivateMessage
+Customer.PasswordRecovery | Store, Customer
+Customer.WelcomeMessage | Store, Customer
+Forums.NewForumPost | Store, Customer, ForumPost, ForumTopic, Forum
+Forums.NewForumTopic | Store, ForumTopic, Forum
+GiftCard.Notification | Store, GiftCard
+NewCustomer.Notification | Store, Customer
+NewReturnRequest.StoreOwnerNotification | Store, Customer, ReturnRequest, OrderItem
+News.NewsComment | Store, NewsComment
+NewsLetterSubscription.ActivationMessage | Store, Subscription
+NewVATSubmitted.StoreOwnerNotification | Store, Customer, VatName, VatAddress
+OrderCancelled.CustomerNotification | Store, Order, Customer
+OrderCompleted.CustomerNotification | Store, Order, Customer
+OrderPaid.CustomerNotification | Store, Order, Customer | **Additional Message Template**
+OrderPaid.StoreOwnerNotification | Store, Order, Customer
+OrderPlaced.CustomerNotification | Store, Order, Customer
+OrderPlaced.StoreOwnerNotification | Store, Order, Customer
+OrderPlaced.VendorNotification | Store, Order, Customer, Vendor
+Product.ProductReview | Store, ProductReview
+QuantityBelow.StoreOwnerNotification | Store, Product
+RecurringPaymentCancelled.StoreOwnerNotification | Store, Order, Customer, RecurringPayment
+ReturnRequestStatusChanged.CustomerNotification | Store, Customer, ReturnRequest, OrderItem
+Service.EmailAFriend | Store, Customer, Product, PersonalMessage, CustomerEmail
+ShipmentDelivered.CustomerNotification | Store, Shipment, Order, Customer
+ShipmentSent.CustomerNotification | Store, Shipment, Order, Customer
+Wishlist.EmailAFriend | Store, Customer, PersonalMessage, CustomerEmail
+
+
+For the Domain Models of Customer, Store, Product, OrderItem etc. see the API:  https://nopcommerce.codeplex.com/SourceControl/latest#src/Libraries/Nop.Core/Domain/Customers/Customer.cs
 
 
 Version
