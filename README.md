@@ -86,6 +86,9 @@ For the Domain Models of Customer, Store, Product, OrderItem etc. see the API:  
 
 Version
 ----
+###1.11
+* "OrderPaid.CustomerNotification" is now sent in the Language the Order was made
+
 ###1.10
 * Added new Message Template "OrderPaid.CustomerNotification"
 * Works with nopCommerce 3.40 

@@ -444,7 +444,7 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var store = _storeService.GetStoreById(order.StoreId) ?? _storeContext.CurrentStore;
 			languageId = EnsureLanguageIsActive(languageId, store.Id);
 
-			SendOrderPaidCustomerNotification(order, languageId);	// Send additional Notification to customer
+			SendOrderPaidCustomerNotification(order, order.CustomerLanguageId);	// Send additional Notification to customer in his Language
 
 			var messageTemplate = GetActiveMessageTemplate("OrderPaid.StoreOwnerNotification", store.Id);
 			if (messageTemplate == null)
