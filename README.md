@@ -84,6 +84,18 @@ Wishlist.EmailAFriend | Store, Customer, PersonalMessage, CustomerEmail
 For the Domain Models of Customer, Store, Product, OrderItem etc. see the API:  https://nopcommerce.codeplex.com/SourceControl/latest#src/Libraries/Nop.Core/Domain/Customers/Customer.cs
 
 
+
+
+
+How to Install
+----
+1. Download and extract to the *Plugins* Folder of your Web Application
+2. Restart the nopCommerce Application
+3. Install the Plugin on the Admin Site at */Admin/Plugin/List*
+4. Done
+
+
+
 Version
 ----
 ###1.11
