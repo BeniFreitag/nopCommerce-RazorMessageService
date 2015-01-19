@@ -23,6 +23,13 @@ Thanks for buying from %Store.Name%. Below is the summary of the order.
 }
 ...
 Order Number: %Order.OrderNumber%
+...
+@if (Nop.Core.Domain.Customers.CustomerExtensions.IsInCustomerRole(Model.Customer, "Registered"))
+{
+	<div>
+		Thanks for your Registration.
+	</div>
+}
 ```
 
 Any Message Template has the related Objects available in the Model. E.g. Model.Order, Model.Customer, Model.Vendor etc.  Works with Subject and Body.
