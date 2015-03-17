@@ -32,43 +32,43 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\Spirig Kerzen\nopCommerce_3.40_Source\Presentation\Nop.Web\Plugins\ToSIC.RazorMessageService\</OutputPath>
+    <OutputPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\Plugins\ToSIC.RazorMessageService\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
-      <HintPath>..\..\Spirig Kerzen\nopCommerce_3.40_Source\packages\Autofac.3.5.0\lib\net40\Autofac.dll</HintPath>
+      <HintPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\bin\Autofac.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Nop.Core">
-      <HintPath>..\..\Spirig Kerzen\nopCommerce_3.40_Source\Presentation\Nop.Web\bin\Nop.Core.dll</HintPath>
+      <HintPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\bin\Nop.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Nop.Services">
-      <HintPath>..\..\Spirig Kerzen\nopCommerce_3.40_Source\Presentation\Nop.Web\bin\Nop.Services.dll</HintPath>
+      <HintPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\bin\Nop.Services.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RazorEngine">
-      <HintPath>..\..\Spirig Kerzen\nopCommerce_3.40_Source\packages\RazorEngine.3.4.1\lib\net45\RazorEngine.dll</HintPath>
+      <HintPath>packages\RazorEngine.3.6.1\lib\net45\RazorEngine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Spirig Kerzen\nopCommerce_3.40_Source\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DependencyRegistrar.cs" />
@@ -78,10 +78,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
     <Content Include="web.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

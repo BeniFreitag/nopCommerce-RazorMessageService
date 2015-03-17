@@ -43,11 +43,7 @@ Disable TinyMCE Editor for Message Templates by adapting "/Administration/Views/
 ```javascript
 if (document.location.pathname.match(/Admin\/MessageTemplate\/Edit/)) return;
 
-tinyMCE.init({
-    ...
-    extended_valid_elements: "text",
-    forced_root_blocks: false
-});
+tinyMCE.init(...;
 ```
 
 
@@ -73,7 +69,7 @@ NewsLetterSubscription.ActivationMessage | Store, Subscription
 NewVATSubmitted.StoreOwnerNotification | Store, Customer, VatName, VatAddress
 OrderCancelled.CustomerNotification | Store, Order, Customer
 OrderCompleted.CustomerNotification | Store, Order, Customer
-OrderPaid.CustomerNotification | Store, Order, Customer | **Additional Message Template**
+OrderPaid.CustomerNotification | Store, Order, Customer | **Additional Message Template in 3.40**
 OrderPaid.StoreOwnerNotification | Store, Order, Customer
 OrderPlaced.CustomerNotification | Store, Order, Customer
 OrderPlaced.StoreOwnerNotification | Store, Order, Customer
@@ -105,8 +101,12 @@ How to Install
 
 Version
 ----
+###1.20
+* Works with nopCommerce 3.50
+
 ###1.11
 * "OrderPaid.CustomerNotification" is now sent in the Language the Order was made
+* Works with nopCommerce 3.40
 
 ###1.10
 * Added new Message Template "OrderPaid.CustomerNotification"
