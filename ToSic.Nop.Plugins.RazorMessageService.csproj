@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\Spirig Kerzen\nopCommerce_3.40_Source\Presentation\Nop.Web\Plugins\ToSIC.RazorMessageService\</OutputPath>
+    <OutputPath>Plugins\Debug\ToSIC.RazorMessageService\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,7 +32,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\Plugins\ToSIC.RazorMessageService\</OutputPath>
+    <OutputPath>Plugins\Release\ToSIC.RazorMessageService\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,15 +44,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
-      <HintPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\bin\Autofac.dll</HintPath>
+      <HintPath>..\nopCommerce_3.70_NoSource\bin\Autofac.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Nop.Core">
-      <HintPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\bin\Nop.Core.dll</HintPath>
+      <HintPath>..\nopCommerce_3.70_NoSource\bin\Nop.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Nop.Services">
-      <HintPath>E:\Projects\nopCommerce_3.50_Source\Presentation\Nop.Web\bin\Nop.Services.dll</HintPath>
+      <HintPath>..\nopCommerce_3.70_NoSource\bin\Nop.Services.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RazorEngine">

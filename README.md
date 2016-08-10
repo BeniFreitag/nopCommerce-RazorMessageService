@@ -66,6 +66,7 @@ NewCustomer.Notification | Store, Customer
 NewReturnRequest.StoreOwnerNotification | Store, Customer, ReturnRequest, OrderItem
 News.NewsComment | Store, NewsComment
 NewsLetterSubscription.ActivationMessage | Store, Subscription
+NewsLetterSubscription.DeactivationMessage | Store, Subscription
 NewVATSubmitted.StoreOwnerNotification | Store, Customer, VatName, VatAddress
 OrderCancelled.CustomerNotification | Store, Order, Customer
 OrderCompleted.CustomerNotification | Store, Order, Customer
@@ -74,6 +75,8 @@ OrderPaid.StoreOwnerNotification | Store, Order, Customer
 OrderPlaced.CustomerNotification | Store, Order, Customer
 OrderPlaced.StoreOwnerNotification | Store, Order, Customer
 OrderPlaced.VendorNotification | Store, Order, Customer, Vendor
+OrderRefunded.CustomerNotification | Store, Order, Customer, RefundedAmount
+OrderRefunded.StoreOwnerNotification | Store, Order, Customer, RefundedAmount
 Product.ProductReview | Store, ProductReview
 QuantityBelow.StoreOwnerNotification | Store, Product
 RecurringPaymentCancelled.StoreOwnerNotification | Store, Order, Customer, RecurringPayment
@@ -81,6 +84,7 @@ ReturnRequestStatusChanged.CustomerNotification | Store, Customer, ReturnRequest
 Service.EmailAFriend | Store, Customer, Product, PersonalMessage, CustomerEmail
 ShipmentDelivered.CustomerNotification | Store, Shipment, Order, Customer
 ShipmentSent.CustomerNotification | Store, Shipment, Order, Customer
+VendorAccountApply.StoreOwnerNotification | Store, Customer, Vendor
 Wishlist.EmailAFriend | Store, Customer, PersonalMessage, CustomerEmail
 
 
@@ -101,6 +105,9 @@ How to Install
 
 Version
 ----
+###1.30
+* Works with nopCommerce 3.70
+
 ###1.20
 * Works with nopCommerce 3.50
 
