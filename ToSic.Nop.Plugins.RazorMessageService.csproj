@@ -48,11 +48,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Nop.Core">
-      <HintPath>..\nopCommerce_3.70_NoSource\bin\Nop.Core.dll</HintPath>
+      <HintPath>..\nopCommerce_3.80_NoSource\bin\Nop.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Nop.Services">
-      <HintPath>..\nopCommerce_3.70_NoSource\bin\Nop.Services.dll</HintPath>
+      <HintPath>..\nopCommerce_3.80_NoSource\bin\Nop.Services.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RazorEngine">

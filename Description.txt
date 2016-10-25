@@ -1,8 +1,8 @@
 ﻿Group: Misc
 FriendlyName: Razor MessageService
 SystemName: ToSIC.RazorMessageService
-Version: 1.20
-SupportedVersions: 3.70
+Version: 1.40
+SupportedVersions: 3.80
 Author: 2sic Internet Solutions
 DisplayOrder: 1
 FileName: ToSic.Nop.Plugins.RazorMessageService.dll

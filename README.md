@@ -85,6 +85,7 @@ Service.EmailAFriend | Store, Customer, Product, PersonalMessage, CustomerEmail
 ShipmentDelivered.CustomerNotification | Store, Shipment, Order, Customer
 ShipmentSent.CustomerNotification | Store, Shipment, Order, Customer
 VendorAccountApply.StoreOwnerNotification | Store, Customer, Vendor
+VendorInformationChange.StoreOwnerNotification | Store, Vendor
 Wishlist.EmailAFriend | Store, Customer, PersonalMessage, CustomerEmail
 
 
@@ -105,6 +106,9 @@ How to Install
 
 Version
 ----
+###1.40
+* Works with nopCommerce 3.80
+
 ###1.30
 * Works with nopCommerce 3.70
 
