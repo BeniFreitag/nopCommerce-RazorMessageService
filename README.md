@@ -106,6 +106,11 @@ How to Install
 
 Version
 ----
+###1.41
+* Updated to RazorEngine 3.9.3
+* Improved Performance with TemplateCaching. First use of a Mail-Template might take up to 2 Seconds to compile. But afterward no more recompilation is needed. Updating the mail template will cause a re-compilation.
+* Works with nopCommerce 3.80
+
 ###1.40
 * Works with nopCommerce 3.80
 

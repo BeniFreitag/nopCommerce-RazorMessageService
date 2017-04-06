@@ -16,7 +16,12 @@ using Nop.Services.Customers;
 using Nop.Services.Events;
 using Nop.Services.Localization;
 using Nop.Services.Stores;
-using Nop.Services.Messages;    // customized
+using Nop.Services.Messages;
+// customized
+using RazorEngine;
+using RazorEngine.Templating;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ToSic.Nop.Plugins.RazorMessageService
 {
@@ -89,26 +94,29 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var subject = messageTemplate.GetLocalized(mt => mt.Subject, languageId);
 			var body = messageTemplate.GetLocalized(mt => mt.Body, languageId);
 
+			#region Customized
+			// Run Razor befor tokenizer to prevent unneded recompilation of the Razor-Template which would be very resource intensive
+
+			// Razor-Parse Subject
+			bool subjectSuccess;
+			var subjectRazorParsed = RazorParseSafe(messageTemplate.Id, subject, razorModel, out subjectSuccess);
+			if (subjectSuccess)
+				subject = subjectRazorParsed;
+			else
+				subject += subjectRazorParsed; // in case of an error, append the error-text returned
+
+			// Razor-Parse Body
+			bool bodySuccess;
+			var bodyRazorParsed = RazorParseSafe(messageTemplate.Id, body, razorModel, out bodySuccess);
+			if (bodySuccess)
+				body = bodyRazorParsed;
+			else
+				body += bodyRazorParsed; // in case of an error, append the error-text returned
+			#endregion
+
 			//Replace subject and body tokens 
 			var subjectReplaced = _tokenizer.Replace(subject, tokens, false);
 			var bodyReplaced = _tokenizer.Replace(body, tokens, true);
-
-			#region Customized
-			// Razor-Parse Subject
-			bool subjectSuccess;
-			var subjectParsed = RazorParseSafe(subjectReplaced, razorModel, out subjectSuccess);
-			if (subjectSuccess)
-				subjectReplaced = subjectParsed;
-			else
-				subjectReplaced += subjectParsed;
-			// Razor-Parse Body
-			bool bodySuccess;
-			var bodyParsed = RazorParseSafe(bodyReplaced, razorModel, out bodySuccess);
-			if (bodySuccess)
-				bodyReplaced = bodyParsed;
-			else
-				bodyReplaced += bodyParsed;
-			#endregion
 
 			var email = new QueuedEmail
 			{
@@ -137,15 +145,38 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 		}
 
 		#region Customized
+
+		/// <summary>
+		/// work arounf MD5 has for razorengine caching.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		private static string GetMd5Hash(string input)
+		{
+			var md5 = MD5.Create();
+			var inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+			var hash = md5.ComputeHash(inputBytes);
+			var sb = new StringBuilder();
+			foreach (byte t in hash)
+			{
+				sb.Append(t.ToString("X2"));
+			}
+
+			return sb.ToString();
+		}
+
 		/// <summary>
 		/// Parse text with Razor and handle Template Exception
 		/// </summary>
-		private static string RazorParseSafe(string text, object model, out bool success)
+		private static string RazorParseSafe(int templateId, string text, object model, out bool success)
 		{
 			string result;
 			try
 			{
-				result = RazorEngine.Razor.Parse(text, model);
+				var key = "MailTemplate" + templateId + GetMd5Hash(text);
+
+				result = Engine.Razor.RunCompile(text, key, model: model);
+
 				success = true;
 			}
 			catch (RazorEngine.Templating.TemplateCompilationException ex)
@@ -183,7 +214,7 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			if (emailAccountId == 0)
 				emailAccountId = messageTemplate.EmailAccountId;
 
-            var emailAccount = _emailAccountService.GetEmailAccountById(emailAccountId);
+			var emailAccount = _emailAccountService.GetEmailAccountById(emailAccountId);
 			if (emailAccount == null)
 				emailAccount = _emailAccountService.GetEmailAccountById(_emailAccountSettings.DefaultEmailAccountId);
 			if (emailAccount == null)
