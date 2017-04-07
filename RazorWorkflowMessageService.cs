@@ -17,11 +17,6 @@ using Nop.Services.Events;
 using Nop.Services.Localization;
 using Nop.Services.Stores;
 using Nop.Services.Messages;
-// customized
-using RazorEngine;
-using RazorEngine.Templating;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace ToSic.Nop.Plugins.RazorMessageService
 {
@@ -99,7 +94,7 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 
 			// Razor-Parse Subject
 			bool subjectSuccess;
-			var subjectRazorParsed = RazorParseSafe(messageTemplate.Id, subject, razorModel, out subjectSuccess);
+			var subjectRazorParsed = Services.RazorTemplateParser.ParseSafe(messageTemplate.Id, subject, razorModel, out subjectSuccess);
 			if (subjectSuccess)
 				subject = subjectRazorParsed;
 			else
@@ -107,7 +102,7 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 
 			// Razor-Parse Body
 			bool bodySuccess;
-			var bodyRazorParsed = RazorParseSafe(messageTemplate.Id, body, razorModel, out bodySuccess);
+			var bodyRazorParsed = Services.RazorTemplateParser.ParseSafe(messageTemplate.Id, body, razorModel, out bodySuccess);
 			if (bodySuccess)
 				body = bodyRazorParsed;
 			else
@@ -143,53 +138,6 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			_queuedEmailService.InsertQueuedEmail(email);
 			return email.Id;
 		}
-
-		#region Customized
-
-		/// <summary>
-		/// work arounf MD5 has for razorengine caching.
-		/// </summary>
-		/// <param name="input"></param>
-		/// <returns></returns>
-		private static string GetMd5Hash(string input)
-		{
-			var md5 = MD5.Create();
-			var inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
-			var hash = md5.ComputeHash(inputBytes);
-			var sb = new StringBuilder();
-			foreach (byte t in hash)
-			{
-				sb.Append(t.ToString("X2"));
-			}
-
-			return sb.ToString();
-		}
-
-		/// <summary>
-		/// Parse text with Razor and handle Template Exception
-		/// </summary>
-		private static string RazorParseSafe(int templateId, string text, object model, out bool success)
-		{
-			string result;
-			try
-			{
-				var key = "MailTemplate" + templateId + GetMd5Hash(text);
-
-				result = Engine.Razor.RunCompile(text, key, model: model);
-
-				success = true;
-			}
-			catch (RazorEngine.Templating.TemplateCompilationException ex)
-			{
-				result = "TemplateCompilationException: ";
-				ex.Errors.ToList().ForEach(p => result += p.ErrorText);
-				success = false;
-			}
-
-			return result;
-		}
-		#endregion
-
 
 		protected virtual MessageTemplate GetActiveMessageTemplate(string messageTemplateName, int storeId)
 		{
@@ -1794,38 +1742,9 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			//event notification
 			_eventPublisher.MessageTokensAdded(messageTemplate, tokens);
 
-			const string notSupportedText = "not supported in TestEmail"; // customized 
-
 			return SendNotification(messageTemplate, emailAccount,
 				languageId, tokens,
-				new
-				{
-					Store = notSupportedText,
-					BlogComment = notSupportedText,
-					Customer = notSupportedText,
-					BackInStockSubscription = notSupportedText,
-					OrderNote = notSupportedText,
-					Order = notSupportedText,
-					PrivateMessage = notSupportedText,
-					ForumPost = notSupportedText,
-					ForumTopic = notSupportedText,
-					Forum = notSupportedText,
-					GiftCard = notSupportedText,
-					ReturnRequest = notSupportedText,
-					OrderItem = notSupportedText,
-					NewsComment = notSupportedText,
-					Subscription = notSupportedText,
-					VatName = notSupportedText,
-					VatAddress = notSupportedText,
-					Vendor = notSupportedText,
-					RefundedAmount = notSupportedText,
-					ProductReview = notSupportedText,
-					Product = notSupportedText,
-					RecurringPayment = notSupportedText,
-					PersonalMessage = notSupportedText,
-					CustomerEmail = notSupportedText,
-					Shipment = notSupportedText
-				}, // customized
+				new DummyMessageModel(), // customized
 				sendToEmail, null);
 		}
 

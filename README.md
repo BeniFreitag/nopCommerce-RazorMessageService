@@ -103,12 +103,16 @@ How to Install
 4. Done
 
 
+Settings
+----
+* *razormessageservice.compiletask.enablelogging* - Enable/disable logging when the schedule task runs to compile messages. Default is *False*. This Setting was added in version 1.41.
 
-Version
+
+Version History
 ----
 ###1.41
+* Improved performance with caching of razor-mail-templates. First use of a mail-template might take up to 2 seconds to compile. Afterward no more recompilation is needed. Updating a mail template causes an automatic re-compilation. There's now a schedule task which automatically compiles all active mail-templates for all stores and languages to improve the performance when using a mail template the first time after an application restart.
 * Updated to RazorEngine 3.9.3
-* Improved Performance with TemplateCaching. First use of a Mail-Template might take up to 2 Seconds to compile. But afterward no more recompilation is needed. Updating the mail template will cause a re-compilation.
 * Works with nopCommerce 3.80
 
 ###1.40
