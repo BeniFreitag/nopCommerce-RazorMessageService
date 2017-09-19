@@ -73,7 +73,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 		#region Utilities
 
 		protected virtual int SendNotification(MessageTemplate messageTemplate,
-			EmailAccount emailAccount, int languageId, IEnumerable<Token> tokens, object razorModel,
+			EmailAccount emailAccount, int languageId, IEnumerable<Token> tokens,
+			object razorModel,  // customized
 			string toEmailAddress, string toName,
 			string attachmentFilePath = null, string attachmentFileName = null,
 			string replyToEmailAddress = null, string replyToName = null)
@@ -83,24 +84,29 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var subject = messageTemplate.GetLocalized((mt) => mt.Subject, languageId);
 			var body = messageTemplate.GetLocalized((mt) => mt.Body, languageId);
 
-			//Replace subject and body tokens 
-			var subjectReplaced = _tokenizer.Replace(subject, tokens, false);
-			var bodyReplaced = _tokenizer.Replace(body, tokens, true);
+			#region Customized
+			// Run Razor befor tokenizer to prevent unneded recompilation of the Razor-Template which would be very resource intensive
 
 			// Razor-Parse Subject
 			bool subjectSuccess;
-			var subjectParsed = RazorParseSafe(subjectReplaced, razorModel, out subjectSuccess);
+			var subjectRazorParsed = Services.RazorTemplateParser.ParseSafe(messageTemplate.Id, subject, razorModel, out subjectSuccess);
 			if (subjectSuccess)
-				subjectReplaced = subjectParsed;
+				subject = subjectRazorParsed;
 			else
-				subjectReplaced += subjectParsed;
+				subject += subjectRazorParsed; // in case of an error, append the error-text returned
+
 			// Razor-Parse Body
 			bool bodySuccess;
-			var bodyParsed = RazorParseSafe(bodyReplaced, razorModel, out bodySuccess);
+			var bodyRazorParsed = Services.RazorTemplateParser.ParseSafe(messageTemplate.Id, body, razorModel, out bodySuccess);
 			if (bodySuccess)
-				bodyReplaced = bodyParsed;
+				body = bodyRazorParsed;
 			else
-				bodyReplaced += bodyParsed;
+				body += bodyRazorParsed; // in case of an error, append the error-text returned
+			#endregion
+
+			//Replace subject and body tokens 
+			var subjectReplaced = _tokenizer.Replace(subject, tokens, false);
+			var bodyReplaced = _tokenizer.Replace(body, tokens, true);
 
 			var email = new QueuedEmail()
 			{
@@ -124,28 +130,6 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			_queuedEmailService.InsertQueuedEmail(email);
 			return email.Id;
 		}
-
-		/// <summary>
-		/// Parse text with Razor and handle Template Exception
-		/// </summary>
-		private static string RazorParseSafe(string text, object model, out bool success)
-		{
-			string result;
-			try
-			{
-				result = RazorEngine.Razor.Parse(text, model);
-				success = true;
-			}
-			catch (RazorEngine.Templating.TemplateCompilationException ex)
-			{
-				result = "TemplateCompilationException: ";
-				ex.Errors.ToList().ForEach(p => result += p.ErrorText);
-				success = false;
-			}
-
-			return result;
-		}
-
 
 		protected virtual MessageTemplate GetActiveMessageTemplate(string messageTemplateName, int storeId)
 		{
@@ -234,7 +218,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Customer = customer },
+				languageId, tokens,
+				new { Store = store, Customer = customer }, // customized
 				toEmail, toName);
 		}
 
@@ -270,7 +255,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = customer.Email;
 			var toName = customer.GetFullName();
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Customer = customer },
+				languageId, tokens,
+				new { Store = store, Customer = customer }, // customized
 				toEmail, toName);
 		}
 
@@ -307,7 +293,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = customer.Email;
 			var toName = customer.GetFullName();
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Customer = customer },
+				languageId, tokens,
+				new { Store = store, Customer = customer }, // customized
 				toEmail, toName);
 		}
 
@@ -344,7 +331,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = customer.Email;
 			var toName = customer.GetFullName();
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Customer = customer },
+				languageId, tokens,
+				new { Store = store, Customer = customer }, // customized
 				toEmail, toName);
 		}
 
@@ -389,7 +377,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = vendor.Email;
 			var toName = vendor.Name;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = order, order.Customer, Vendor = vendor },
+				languageId, tokens,
+				new { Store = store, Order = order, order.Customer, Vendor = vendor },  // customized
 				toEmail, toName);
 		}
 
@@ -426,7 +415,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = order, order.Customer },
+				languageId, tokens,
+				new { Store = store, Order = order, order.Customer },   // customized
 				toEmail, toName);
 		}
 
@@ -444,7 +434,7 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var store = _storeService.GetStoreById(order.StoreId) ?? _storeContext.CurrentStore;
 			languageId = EnsureLanguageIsActive(languageId, store.Id);
 
-			SendOrderPaidCustomerNotification(order, order.CustomerLanguageId);	// Send additional Notification to customer in his Language
+            SendOrderPaidCustomerNotification(order, order.CustomerLanguageId);    // Send additional Notification to customer in his language
 
 			var messageTemplate = GetActiveMessageTemplate("OrderPaid.StoreOwnerNotification", store.Id);
 			if (messageTemplate == null)
@@ -465,7 +455,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = order, order.Customer },
+				languageId, tokens,
+				new { Store = store, Order = order, order.Customer },   // customized
 				toEmail, toName);
 		}
 
@@ -504,7 +495,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = order.BillingAddress.Email;
 			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = order, order.Customer },
+				languageId, tokens,
+				new { Store = store, Order = order, order.Customer },   // customized
 				toEmail, toName);
 		}
 
@@ -545,7 +537,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = order.BillingAddress.Email;
 			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = order, order.Customer },
+				languageId, tokens,
+				new { Store = store, Order = order, order.Customer },   // customized
 				toEmail, toName,
 				attachmentFilePath,
 				attachmentFileName);
@@ -589,7 +582,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = order.BillingAddress.Email;
 			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Shipment = shipment, shipment.Order, shipment.Order.Customer },
+				languageId, tokens,
+				new { Store = store, Shipment = shipment, shipment.Order, shipment.Order.Customer },    // customized
 				toEmail, toName);
 		}
 
@@ -631,7 +625,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = order.BillingAddress.Email;
 			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Shipment = shipment, shipment.Order, shipment.Order.Customer },
+				languageId, tokens,
+				new { Store = store, Shipment = shipment, shipment.Order, shipment.Order.Customer },    // customized
 				toEmail, toName);
 		}
 
@@ -671,7 +666,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = order.BillingAddress.Email;
 			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = order, order.Customer },
+				languageId, tokens,
+				new { Store = store, Order = order, order.Customer },   // customized
 				toEmail, toName,
 				attachmentFilePath,
 				attachmentFileName);
@@ -710,7 +706,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = order.BillingAddress.Email;
 			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = order, order.Customer },
+				languageId, tokens,
+				new { Store = store, Order = order, order.Customer },   // customized
 				toEmail, toName);
 		}
 
@@ -750,7 +747,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = order.BillingAddress.Email;
 			var toName = string.Format("{0} {1}", order.BillingAddress.FirstName, order.BillingAddress.LastName);
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, OrderNote = orderNote, orderNote.Order, orderNote.Order.Customer },
+				languageId, tokens,
+				new { Store = store, OrderNote = orderNote, orderNote.Order, orderNote.Order.Customer },    // customized
 				toEmail, toName);
 		}
 
@@ -788,7 +786,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Order = recurringPayment.InitialOrder, recurringPayment.InitialOrder.Customer, RecurringPayment = recurringPayment },
+				languageId, tokens,
+				new { Store = store, Order = recurringPayment.InitialOrder, recurringPayment.InitialOrder.Customer, RecurringPayment = recurringPayment },  // customized
 				toEmail, toName);
 		}
 
@@ -829,7 +828,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = subscription.Email;
 			var toName = "";
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Subscription = subscription },
+				languageId, tokens,
+				new { Store = store, Subscription = subscription }, // customized
 				toEmail, toName);
 		}
 
@@ -880,7 +880,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = friendsEmail;
 			var toName = "";
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Customer = customer, Product = product, PersonalMessage = personalMessage, CustomerEmail = customerEmail },
+				languageId, tokens,
+				new { Store = store, Customer = customer, Product = product, PersonalMessage = personalMessage, CustomerEmail = customerEmail },    // customized
 				toEmail, toName);
 		}
 
@@ -922,7 +923,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = friendsEmail;
 			var toName = "";
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Customer = customer, PersonalMessage = personalMessage, CustomerEmail = customerEmail },
+				languageId, tokens,
+				new { Store = store, Customer = customer, PersonalMessage = personalMessage, CustomerEmail = customerEmail },   // customized
 				toEmail, toName);
 		}
 
@@ -964,7 +966,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, returnRequest.Customer, ReturnRequest = returnRequest, OrderItem = orderItem },
+				languageId, tokens,
+				new { Store = store, returnRequest.Customer, ReturnRequest = returnRequest, OrderItem = orderItem },    // customized
 				toEmail, toName);
 		}
 
@@ -1006,7 +1009,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 				orderItem.Order.BillingAddress.FirstName :
 				returnRequest.Customer.GetFullName();
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, returnRequest.Customer, ReturnRequest = returnRequest, OrderItem = orderItem },
+				languageId, tokens,
+				new { Store = store, returnRequest.Customer, ReturnRequest = returnRequest, OrderItem = orderItem },    // customized
 				toEmail, toName);
 		}
 
@@ -1050,7 +1054,9 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = customer.Email;
 			var toName = customer.GetFullName();
 
-			return SendNotification(messageTemplate, emailAccount, languageId, tokens, new { Store = store, ForumTopic = forumTopic, forumTopic.Forum }, toEmail, toName);
+			return SendNotification(messageTemplate, emailAccount, languageId, tokens,
+				new { Store = store, ForumTopic = forumTopic, forumTopic.Forum },   // customized
+				toEmail, toName);
 		}
 
 		/// <summary>
@@ -1097,7 +1103,9 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = customer.Email;
 			var toName = customer.GetFullName();
 
-			return SendNotification(messageTemplate, emailAccount, languageId, tokens, new { Store = store, Customer = customer, ForumPost = forumPost, forumPost.ForumTopic, forumPost.ForumTopic.Forum }, toEmail, toName);
+			return SendNotification(messageTemplate, emailAccount, languageId, tokens,
+				new { Store = store, Customer = customer, ForumPost = forumPost, forumPost.ForumTopic, forumPost.ForumTopic.Forum },    // customized
+				toEmail, toName);
 		}
 
 		/// <summary>
@@ -1135,7 +1143,9 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = privateMessage.ToCustomer.Email;
 			var toName = privateMessage.ToCustomer.GetFullName();
 
-			return SendNotification(messageTemplate, emailAccount, languageId, tokens, new { Store = store, PrivateMessage = privateMessage }, toEmail, toName);
+			return SendNotification(messageTemplate, emailAccount, languageId, tokens,
+				new { Store = store, PrivateMessage = privateMessage }, // customized
+				toEmail, toName);
 		}
 
 		#endregion
@@ -1181,7 +1191,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = giftCard.RecipientEmail;
 			var toName = giftCard.RecipientName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, GiftCard = giftCard },
+				languageId, tokens,
+				new { Store = store, GiftCard = giftCard }, // customized
 				toEmail, toName);
 		}
 
@@ -1218,7 +1229,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, ProductReview = productReview },
+				languageId, tokens,
+				new { Store = store, ProductReview = productReview },   // customized
 				toEmail, toName);
 		}
 
@@ -1253,7 +1265,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Product = product },
+				languageId, tokens,
+				new { Store = store, Product = product },   // customized
 				toEmail, toName);
 		}
 
@@ -1294,7 +1307,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, Customer = customer, VatName = vatName, VatAddress = vatAddress },
+				languageId, tokens,
+				new { Store = store, Customer = customer, VatName = vatName, VatAddress = vatAddress }, // customized
 				toEmail, toName);
 		}
 
@@ -1330,7 +1344,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, BlogComment = blogComment },
+				languageId, tokens,
+				new { Store = store, BlogComment = blogComment },   // customized
 				toEmail, toName);
 		}
 
@@ -1366,7 +1381,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = emailAccount.Email;
 			var toName = emailAccount.DisplayName;
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, NewsComment = newsComment },
+				languageId, tokens,
+				new { Store = store, NewsComment = newsComment },   // customized
 				toEmail, toName);
 		}
 
@@ -1404,7 +1420,8 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			var toEmail = customer.Email;
 			var toName = customer.GetFullName();
 			return SendNotification(messageTemplate, emailAccount,
-				languageId, tokens, new { Store = store, subscription.Customer, BackInStockSubscription = subscription },
+				languageId, tokens,
+				new { Store = store, subscription.Customer, BackInStockSubscription = subscription },   // customized
 				toEmail, toName);
 		}
 

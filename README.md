@@ -105,6 +105,11 @@ How to Install
 
 Version
 ----
+###1.12
+* Improved performance with caching of razor-mail-templates. First use of a mail-template might take up to 2 seconds to compile. Afterward no more recompilation is needed. Updating a mail template causes an automatic re-compilation. There's now a schedule task which automatically compiles all active mail-templates for all stores and languages to improve the performance when using a mail template the first time after an application restart.
+* Updated to RazorEngine 3.9.3
+* Works with nopCommerce 3.40
+
 ###1.11
 * "OrderPaid.CustomerNotification" is now sent in the Language the Order was made
 
