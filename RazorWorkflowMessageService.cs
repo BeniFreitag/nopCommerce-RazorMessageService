@@ -95,8 +95,11 @@ namespace ToSic.Nop.Plugins.RazorMessageService
 			else
 				subject += subjectRazorParsed; // in case of an error, append the error-text returned
 
-			// Razor-Parse Body
-			bool bodySuccess;
+		    if (subject.Length > 1000)
+		        subject = subject.Substring(0, 1000);
+
+            // Razor-Parse Body
+            bool bodySuccess;
 			var bodyRazorParsed = Services.RazorTemplateParser.ParseSafe(messageTemplate.Id, body, razorModel, out bodySuccess);
 			if (bodySuccess)
 				body = bodyRazorParsed;
