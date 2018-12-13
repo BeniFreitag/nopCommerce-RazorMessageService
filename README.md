@@ -135,4 +135,11 @@ Version History
 ###1.00
 * Works with nopCommerce 3.40
 
+
+Debugging Notes
+----
+* Errors in a template will result in an unparsed email, but with error-details at the end in the mail-body.
+* Change setting "razormessageservice.compiletask.enablelogging" to "true" will log the result of a pre-compilation of all templates. Templates containing errors will be logged as "success: False"
+
+
 [RazorEngine]:https://github.com/Antaris/RazorEngine
